@@ -53,6 +53,27 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>ga.rugal.maven</groupId>
+                <artifactId>commitlinter-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <configuration>
+                    <matchPattern>([\w\s]+-\d+:\s)(.*)</matchPattern>
+                    <failOnError>true</failOnError>
+                    <captureGroups>
+                        <captureGroup>
+                            <max>10</max>
+                            <min>2</min>
+                            <caseFormat>LOWERCASE</caseFormat>
+                        </captureGroup>
+                        <captureGroup>
+                            <max>20</max>
+                            <tense>PRESENT</tense>
+                            <caseFormat>LOWERCASE</caseFormat>
+                        </captureGroup>
+                    </captureGroups>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
