@@ -8,4 +8,8 @@ public interface Idao<T> {
     T buscarPorId(Integer id);
 
     List<T> buscarATodos();
+
+    void modificar(T t);
+
+    void eliminar(Integer id);
 }

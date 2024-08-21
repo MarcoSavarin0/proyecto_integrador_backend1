@@ -21,4 +21,10 @@ public class OdontologoService {
     public List<Odontologo> buscarTodosLosOdontologos(){
         return OdontologoIdao.buscarATodos();
     }
+    public void odontologoUpdate(Odontologo o){
+        OdontologoIdao.modificar(o);
+    }
+    public void odontologoDelete(Integer id){
+        OdontologoIdao.eliminar(id);
+    }
 }
