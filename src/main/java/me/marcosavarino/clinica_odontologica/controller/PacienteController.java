@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RestController
@@ -32,23 +33,23 @@ public class PacienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPaciente);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Paciente> actualizarPaciente(@PathVariable Integer id, @RequestBody Paciente paciente) {
-        if (pacienteService.buscarPorId(id) != null) {
-            paciente.setId(id); // Asegúrate de que el ID del paciente sea el correcto para la actualización
+    @PutMapping("/editar")
+    public ResponseEntity<Object> actualizarPaciente(@RequestBody Paciente paciente) {
+        if (pacienteService.buscarPorId(paciente.getId()) != null) {
             pacienteService.pacienteUpdate(paciente);
             return ResponseEntity.ok(paciente);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Paciente con ID " + paciente.getId() + " no encontrado.");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarPaciente(@PathVariable Integer id) {
+    public ResponseEntity<String> eliminarPaciente(@PathVariable Integer id) {
         if (pacienteService.buscarPorId(id) != null) {
             pacienteService.pacienteDelete(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.OK).body("Paciente con el id : " + id + " eliminado");
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente con el ID, " + id + " no encontrado. " + HttpStatus.NOT_FOUND);
     }
 
     @GetMapping

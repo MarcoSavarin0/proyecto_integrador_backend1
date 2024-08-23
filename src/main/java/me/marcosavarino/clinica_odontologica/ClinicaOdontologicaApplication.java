@@ -11,5 +11,4 @@ public class ClinicaOdontologicaApplication {
 		H2Connection.crearTablas();
 		SpringApplication.run(ClinicaOdontologicaApplication.class, args);
 	}
-
 }
