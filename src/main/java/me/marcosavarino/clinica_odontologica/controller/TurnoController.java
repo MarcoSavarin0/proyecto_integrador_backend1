@@ -1,12 +1,13 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
-import me.marcosavarino.clinica_odontologica.model.Turno;
-import me.marcosavarino.clinica_odontologica.service.TurnoService;
+import me.marcosavarino.clinica_odontologica.entity.Turno;
+import me.marcosavarino.clinica_odontologica.service.impl.TurnoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/turnos")
@@ -50,11 +51,12 @@ public class TurnoController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("Hubo un problema al editar el turno!");
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> turnoPorId(@PathVariable Integer id){
-        Turno turnoEncontrado = turnoService.buscarPorId(id);
-        if (turnoEncontrado != null){
-            return ResponseEntity.ok(turnoEncontrado);
+    public ResponseEntity<?> turnoPorId(@PathVariable Integer id) {
+        Optional<Turno> turnoEncontrado = turnoService.buscarPorId(id);
+        if (turnoEncontrado.isPresent()) {
+            return ResponseEntity.ok(turnoEncontrado.get());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Hubo un problema al encontrar el turno!");

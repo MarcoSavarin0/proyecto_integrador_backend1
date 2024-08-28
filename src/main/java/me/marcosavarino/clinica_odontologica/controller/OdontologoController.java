@@ -1,13 +1,14 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
-import me.marcosavarino.clinica_odontologica.model.Odontologo;
-import me.marcosavarino.clinica_odontologica.service.OdontologoService;
+import me.marcosavarino.clinica_odontologica.entity.Odontologo;
+import me.marcosavarino.clinica_odontologica.service.impl.OdontologoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RestController
@@ -21,8 +22,8 @@ public class OdontologoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Odontologo> mostrarPorId(@PathVariable Integer id) {
-        Odontologo odontologo = odontologoService.buscarPorId(id);
-        return odontologo != null ? ResponseEntity.ok(odontologo) : ResponseEntity.notFound().build();
+       Optional<Odontologo> odontologo = odontologoService.buscarPorId(id);
+        return odontologo.isPresent() ? ResponseEntity.ok(odontologo.get()) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
@@ -42,10 +43,11 @@ public class OdontologoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarOdontologo(@PathVariable Integer id) {
-        if (odontologoService.buscarPorId(id) != null) {
+    public ResponseEntity<?> eliminarOdontologo(@PathVariable Integer id) {
+        if (odontologoService.buscarPorId(id).isPresent()) {
             odontologoService.odontologoDelete(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Odontologo con el id : " + id + " eliminado");
+            String jsonResponse = "{\"mensaje\": \"El Odontologo fue modificado\"}";
+            return ResponseEntity.ok(jsonResponse);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Odontologo con el ID, " + id + " no encontrado. " + HttpStatus.NOT_FOUND);
     }

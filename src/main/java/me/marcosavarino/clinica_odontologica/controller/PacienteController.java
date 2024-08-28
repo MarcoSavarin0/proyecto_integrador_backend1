@@ -1,7 +1,7 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
-import me.marcosavarino.clinica_odontologica.model.Paciente;
-import me.marcosavarino.clinica_odontologica.service.PacienteService;
+import me.marcosavarino.clinica_odontologica.entity.Paciente;
+import me.marcosavarino.clinica_odontologica.service.impl.PacienteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @Controller
 @RestController
@@ -23,8 +23,8 @@ public class PacienteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Paciente> mostrarPacientePorId(@PathVariable Integer id) {
-        Paciente paciente = pacienteService.buscarPorId(id);
-        return paciente != null ? ResponseEntity.ok(paciente) : ResponseEntity.notFound().build();
+        Optional<Paciente> paciente = pacienteService.buscarPorId(id);
+        return paciente.isPresent() ? ResponseEntity.ok(paciente.get()) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
@@ -47,7 +47,8 @@ public class PacienteController {
     public ResponseEntity<String> eliminarPaciente(@PathVariable Integer id) {
         if (pacienteService.buscarPorId(id) != null) {
             pacienteService.pacienteDelete(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Paciente con el id : " + id + " eliminado");
+            String jsonResponse = "{\"mensaje\": \"El Paciente fue modificado\"}";
+            return ResponseEntity.ok(jsonResponse);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente con el ID, " + id + " no encontrado. " + HttpStatus.NOT_FOUND);
     }
