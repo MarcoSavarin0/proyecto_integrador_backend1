@@ -1,5 +1,6 @@
 package me.marcosavarino.clinica_odontologica.service;
 
+import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.OdontologoTurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Odontologo;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public interface IOdontologoService {
     void odontologoUpdate(Odontologo o);
 
     void odontologoDelete(Integer id);
+    Optional<OdontologoTurnoResponseDto> buscarPorIdController(Integer id);
 }

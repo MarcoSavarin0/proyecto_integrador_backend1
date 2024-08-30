@@ -1,5 +1,6 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
+import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.OdontologoTurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Odontologo;
 import me.marcosavarino.clinica_odontologica.service.impl.OdontologoService;
 import org.springframework.stereotype.Controller;
@@ -21,8 +22,8 @@ public class OdontologoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Odontologo> mostrarPorId(@PathVariable Integer id) {
-       Optional<Odontologo> odontologo = odontologoService.buscarPorId(id);
+    public ResponseEntity<OdontologoTurnoResponseDto> mostrarPorId(@PathVariable Integer id) {
+       Optional<OdontologoTurnoResponseDto> odontologo = odontologoService.buscarPorIdController(id);
         return odontologo.isPresent() ? ResponseEntity.ok(odontologo.get()) : ResponseEntity.notFound().build();
     }
 

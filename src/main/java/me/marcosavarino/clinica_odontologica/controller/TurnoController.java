@@ -1,5 +1,8 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
+import me.marcosavarino.clinica_odontologica.dto.request.TurnoModificarDto;
+import me.marcosavarino.clinica_odontologica.dto.request.TurnoRequestDto;
+import me.marcosavarino.clinica_odontologica.dto.response.TurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Turno;
 import me.marcosavarino.clinica_odontologica.service.impl.TurnoService;
 import org.springframework.http.HttpStatus;
@@ -19,8 +22,8 @@ public class TurnoController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> guardarTurno(@RequestBody Turno turno) {
-        Turno turnoAGuardar = turnoService.guardarTurno(turno);
+    public ResponseEntity<?> guardarTurno(@RequestBody TurnoRequestDto turnoRequestDto) {
+        TurnoResponseDto turnoAGuardar = turnoService.guardarTurno(turnoRequestDto);
         if (turnoAGuardar != null) {
             return ResponseEntity.ok(turnoAGuardar);
         } else {
@@ -29,7 +32,7 @@ public class TurnoController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Turno>> buscarTodos() {
+    public ResponseEntity<List<TurnoResponseDto>> buscarTodos() {
         return ResponseEntity.ok(turnoService.buscarTodos());
     }
 
@@ -43,10 +46,10 @@ public class TurnoController {
     }
 
     @PutMapping("/editar")
-    public ResponseEntity<Object> editarTurno(@RequestBody Turno turno) {
-        if (turnoService.buscarPorId(turno.getId()) != null) {
-            turnoService.modificarTurno(turno);
-            return ResponseEntity.ok(turno);
+    public ResponseEntity<Object> editarTurno(@RequestBody TurnoModificarDto turnoModificarDto) {
+        if (turnoService.buscarPorId(turnoModificarDto.getId()) != null) {
+            turnoService.modificarTurno(turnoModificarDto);
+            return ResponseEntity.ok(turnoModificarDto);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("Hubo un problema al editar el turno!");
@@ -54,7 +57,7 @@ public class TurnoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> turnoPorId(@PathVariable Integer id) {
-        Optional<Turno> turnoEncontrado = turnoService.buscarPorId(id);
+        Optional<TurnoResponseDto> turnoEncontrado = turnoService.buscarPorId(id);
         if (turnoEncontrado.isPresent()) {
             return ResponseEntity.ok(turnoEncontrado.get());
         } else {

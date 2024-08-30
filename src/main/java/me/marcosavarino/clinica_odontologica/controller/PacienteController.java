@@ -1,5 +1,7 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
+import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.OdontologoTurnoResponseDto;
+import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Pacientes.PacienteTurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Paciente;
 import me.marcosavarino.clinica_odontologica.service.impl.PacienteService;
 import org.springframework.http.HttpStatus;
@@ -22,8 +24,8 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Paciente> mostrarPacientePorId(@PathVariable Integer id) {
-        Optional<Paciente> paciente = pacienteService.buscarPorId(id);
+    public ResponseEntity<PacienteTurnoResponseDto> mostrarPacientePorId(@PathVariable Integer id) {
+        Optional<PacienteTurnoResponseDto> paciente = pacienteService.buscarPorIdController(id);
         return paciente.isPresent() ? ResponseEntity.ok(paciente.get()) : ResponseEntity.notFound().build();
     }
 
@@ -54,8 +56,8 @@ public class PacienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Paciente>> mostrarTodosLosPacientes() {
-        List<Paciente> pacientes = pacienteService.buscarTodosLosPacientes();
+    public ResponseEntity<List<PacienteTurnoResponseDto>> mostrarTodosLosPacientes() {
+        List<PacienteTurnoResponseDto> pacientes = pacienteService.buscarTodosLosPacientes();
         return ResponseEntity.ok(pacientes);
     }
 }

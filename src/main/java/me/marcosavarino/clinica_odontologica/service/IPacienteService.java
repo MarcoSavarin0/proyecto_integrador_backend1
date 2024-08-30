@@ -1,5 +1,6 @@
 package me.marcosavarino.clinica_odontologica.service;
 
+import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Pacientes.PacienteTurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Paciente;
 
 import java.util.List;
@@ -10,9 +11,11 @@ public interface IPacienteService {
 
     Optional<Paciente> buscarPorId(Integer id);
 
-    List<Paciente> buscarTodosLosPacientes();
+    List<PacienteTurnoResponseDto> buscarTodosLosPacientes();
 
     void pacienteUpdate(Paciente p);
 
     void pacienteDelete(Integer id);
+
+    Optional<PacienteTurnoResponseDto> buscarPorIdController(Integer id);
 }

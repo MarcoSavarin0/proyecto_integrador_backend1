@@ -1,5 +1,8 @@
 package me.marcosavarino.clinica_odontologica.service;
 
+import me.marcosavarino.clinica_odontologica.dto.request.TurnoModificarDto;
+import me.marcosavarino.clinica_odontologica.dto.request.TurnoRequestDto;
+import me.marcosavarino.clinica_odontologica.dto.response.TurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Odontologo;
 import me.marcosavarino.clinica_odontologica.entity.Paciente;
 import me.marcosavarino.clinica_odontologica.entity.Turno;
@@ -8,13 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ITurnoService {
-    Turno guardarTurno(Turno turno);
+    TurnoResponseDto guardarTurno(TurnoRequestDto turnoRequestDto);
 
-    Optional<Turno> buscarPorId(Integer id);
+    Optional<TurnoResponseDto> buscarPorId(Integer id);
 
-    List<Turno> buscarTodos();
+    List<TurnoResponseDto> buscarTodos();
 
-    void modificarTurno(Turno turno);
+    void modificarTurno(TurnoModificarDto TurnoModificarDto);
 
     void eliminarTurno(Integer id);
 }
