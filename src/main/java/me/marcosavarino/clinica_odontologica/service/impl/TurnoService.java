@@ -8,6 +8,8 @@ import me.marcosavarino.clinica_odontologica.dto.response.TurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Odontologo;
 import me.marcosavarino.clinica_odontologica.entity.Paciente;
 import me.marcosavarino.clinica_odontologica.entity.Turno;
+import me.marcosavarino.clinica_odontologica.exception.BadRequestException;
+import me.marcosavarino.clinica_odontologica.exception.ResourceNotFoundException;
 import me.marcosavarino.clinica_odontologica.repository.ITurnoRepository;
 import me.marcosavarino.clinica_odontologica.service.ITurnoService;
 import org.modelmapper.ModelMapper;
@@ -82,15 +84,21 @@ public class TurnoService implements ITurnoService {
             turnoRepository.save(turno);
         }
     }
-        @Override
-        public void eliminarTurno (Integer id){
-            turnoRepository.deleteById(id);
-        }
 
-        private TurnoResponseDto mapearATurnoResponse (Turno turno){
-            TurnoResponseDto turnoResponseDto = modelMapper.map(turno, TurnoResponseDto.class);
-            turnoResponseDto.setOdontologoResponseDto(modelMapper.map(turno.getOdontologo(), OdontologoResponseDto.class));
-            turnoResponseDto.setPacienteResponseDto(modelMapper.map(turno.getPaciente(), PacienteResponseDto.class));
-            return turnoResponseDto;
+    @Override
+    public void eliminarTurno(Integer id) {
+        Optional<Turno> turno = turnoRepository.findById(id);
+        if (turno.isPresent()) {
+            turnoRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("No se pudo eliminar el turno " + id);
         }
     }
+
+    private TurnoResponseDto mapearATurnoResponse(Turno turno) {
+        TurnoResponseDto turnoResponseDto = modelMapper.map(turno, TurnoResponseDto.class);
+        turnoResponseDto.setOdontologoResponseDto(modelMapper.map(turno.getOdontologo(), OdontologoResponseDto.class));
+        turnoResponseDto.setPacienteResponseDto(modelMapper.map(turno.getPaciente(), PacienteResponseDto.class));
+        return turnoResponseDto;
+    }
+}

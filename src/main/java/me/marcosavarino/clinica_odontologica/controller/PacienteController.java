@@ -1,7 +1,10 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
+import me.marcosavarino.clinica_odontologica.dto.response.DomicilioResponseDto;
+import me.marcosavarino.clinica_odontologica.dto.response.PacienteResponseSaveDto;
 import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.OdontologoTurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Pacientes.PacienteTurnoResponseDto;
+import me.marcosavarino.clinica_odontologica.entity.Domicilio;
 import me.marcosavarino.clinica_odontologica.entity.Paciente;
 import me.marcosavarino.clinica_odontologica.service.impl.PacienteService;
 import org.springframework.http.HttpStatus;
@@ -30,29 +33,39 @@ public class PacienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Paciente> guardarPaciente(@RequestBody Paciente paciente) {
+    public ResponseEntity<PacienteResponseSaveDto> guardarPaciente(@RequestBody Paciente paciente) {
         Paciente savedPaciente = pacienteService.guardarPaciente(paciente);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedPaciente);
+
+        Domicilio domicilioPaciente = savedPaciente.getDomicilio();
+        DomicilioResponseDto domicilioResponseDto = new DomicilioResponseDto(
+                domicilioPaciente.getId(),
+                domicilioPaciente.getCalle(),
+                domicilioPaciente.getNumero(),
+                domicilioPaciente.getLocalidad(),
+                domicilioPaciente.getProvincia()
+        );
+
+        PacienteResponseSaveDto pacienteResponseSaveDto = new PacienteResponseSaveDto(
+                savedPaciente.getId(),
+                savedPaciente.getNombre(),
+                savedPaciente.getApellido(),
+                savedPaciente.getDni(),
+                domicilioResponseDto
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(pacienteResponseSaveDto);
     }
 
     @PutMapping("/editar")
-    public ResponseEntity<Object> actualizarPaciente(@RequestBody Paciente paciente) {
-        if (pacienteService.buscarPorId(paciente.getId()) != null) {
+    public ResponseEntity<Paciente> actualizarPaciente(@RequestBody Paciente paciente) {
             pacienteService.pacienteUpdate(paciente);
-            return ResponseEntity.ok(paciente);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Paciente con ID " + paciente.getId() + " no encontrado.");
+            return ResponseEntity.status(HttpStatus.OK).body(paciente);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarPaciente(@PathVariable Integer id) {
-        if (pacienteService.buscarPorId(id) != null) {
-            pacienteService.pacienteDelete(id);
-            String jsonResponse = "{\"mensaje\": \"El Paciente fue modificado\"}";
-            return ResponseEntity.ok(jsonResponse);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente con el ID, " + id + " no encontrado. " + HttpStatus.NOT_FOUND);
+        pacienteService.pacienteDelete(id);
+        return ResponseEntity.ok("{\"mensaje\": \"El Paciente fue modificado\"}");
     }
 
     @GetMapping

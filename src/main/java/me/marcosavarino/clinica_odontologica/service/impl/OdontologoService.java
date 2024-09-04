@@ -5,9 +5,15 @@ import me.marcosavarino.clinica_odontologica.dto.response.PacienteResponseDto;
 import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.TurnosOdontologoResoponseDto;
 import me.marcosavarino.clinica_odontologica.dto.response.TurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Odontologo;
+import me.marcosavarino.clinica_odontologica.exception.BadRequestException;
+import me.marcosavarino.clinica_odontologica.exception.ResourceNotFoundException;
 import me.marcosavarino.clinica_odontologica.repository.IOdontologoRepository;
 import me.marcosavarino.clinica_odontologica.service.IOdontologoService;
+import me.marcosavarino.clinica_odontologica.utils.ValidationUtils;
+import org.hibernate.grammars.hql.HqlParser;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,33 +26,61 @@ public class OdontologoService implements IOdontologoService {
     private IOdontologoRepository odontologoRepository;
     @Autowired
     private ModelMapper modelMapper;
+    private final Logger logger = LoggerFactory.getLogger(OdontologoService.class);
+
     public OdontologoService(IOdontologoRepository odontologoRepository) {
         this.odontologoRepository = odontologoRepository;
     }
 
     @Override
     public Odontologo guardarOdontologo(Odontologo odontologo) {
+        ValidationUtils.validateOdontologo(odontologo);
+        logger.info("Odontologo guardado: {}" + odontologo);
         return odontologoRepository.save(odontologo);
     }
 
     @Override
     public Optional<Odontologo> buscarPorId(Integer id) {
-        return odontologoRepository.findById(id);
+        Optional<Odontologo> odontologo = odontologoRepository.findById(id);
+        if (odontologo.isPresent()) {
+            logger.info("Odontologo encontrado: {}" + odontologo);
+            return odontologo;
+        } else {
+            logger.warn("No se encontro el odontologo " + id);
+            throw new ResourceNotFoundException("No se encontro al odontologo con el " + id);
+        }
     }
 
     @Override
     public List<Odontologo> buscarTodosLosOdontologos() {
-        return odontologoRepository.findAll();
+        List<Odontologo> odontologos = odontologoRepository.findAll();
+        logger.info("Odontologos encontrado: {}" + odontologos);
+        return odontologos;
     }
 
     @Override
     public void odontologoUpdate(Odontologo o) {
-        odontologoRepository.save(o);
+        Optional<Odontologo> ondontologo = odontologoRepository.findById(o.getId());
+        if (ondontologo.isPresent()) {
+            ValidationUtils.validateOdontologo(o);
+            odontologoRepository.save(o);
+
+        } else {
+            logger.warn("No se encontro el odontologo " + o.getId());
+            throw new ResourceNotFoundException("No se encontro al odontologo con el " + o.getId());
+        }
     }
 
     @Override
     public void odontologoDelete(Integer id) {
-        odontologoRepository.deleteById(id);
+        Optional<Odontologo> ondontologo = odontologoRepository.findById(id);
+        if (ondontologo.isPresent()) {
+            logger.info("Odontologo encontrado: {}" + ondontologo);
+            odontologoRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("No se pudo eliminar el odontologo " + id);
+        }
+
     }
 
     @Override
@@ -56,7 +90,7 @@ public class OdontologoService implements IOdontologoService {
             OdontologoTurnoResponseDto responseDto = mapearOdontologo(odontologoOpt.get());
             return Optional.of(responseDto);
         } else {
-            return Optional.empty();
+            throw new BadRequestException("El odontologo con el " + id + " no fue encontrado");
         }
     }
 

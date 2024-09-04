@@ -1,5 +1,6 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
+import me.marcosavarino.clinica_odontologica.dto.response.OdontologoResponseDto;
 import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.OdontologoTurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Odontologo;
 import me.marcosavarino.clinica_odontologica.service.impl.OdontologoService;
@@ -23,34 +24,29 @@ public class OdontologoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OdontologoTurnoResponseDto> mostrarPorId(@PathVariable Integer id) {
-       Optional<OdontologoTurnoResponseDto> odontologo = odontologoService.buscarPorIdController(id);
-        return odontologo.isPresent() ? ResponseEntity.ok(odontologo.get()) : ResponseEntity.notFound().build();
+        Optional<OdontologoTurnoResponseDto> odontologo = odontologoService.buscarPorIdController(id);
+        return ResponseEntity.ok(odontologo.get());
     }
 
     @PostMapping
-    public ResponseEntity<Odontologo> guardarOdontologo(@RequestBody Odontologo odontologo) {
+    public ResponseEntity<OdontologoResponseDto> guardarOdontologo(@RequestBody Odontologo odontologo) {
         Odontologo savedOdontologo = odontologoService.guardarOdontologo(odontologo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedOdontologo);
+        OdontologoResponseDto odontologoResponseDto = new OdontologoResponseDto(savedOdontologo.getId(), savedOdontologo.getNumero_De_Licencia(),
+                savedOdontologo.getNombre(), savedOdontologo.getApellido()
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(odontologoResponseDto);
     }
 
     @PutMapping("/editar")
-    public ResponseEntity<Object> actualizarOdontologo( @RequestBody Odontologo odontologo) {
-        if (odontologoService.buscarPorId(odontologo.getId()) != null) {
-            odontologoService.odontologoUpdate(odontologo);
-            return ResponseEntity.ok(odontologo);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Odontologo con ID " + odontologo.getId() + " no encontrado.");
+    public ResponseEntity<Odontologo> actualizarOdontologo(@RequestBody Odontologo odontologo) {
+        odontologoService.odontologoUpdate(odontologo);
+        return ResponseEntity.ok(odontologo);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarOdontologo(@PathVariable Integer id) {
-        if (odontologoService.buscarPorId(id).isPresent()) {
-            odontologoService.odontologoDelete(id);
-            String jsonResponse = "{\"mensaje\": \"El Odontologo fue modificado\"}";
-            return ResponseEntity.ok(jsonResponse);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Odontologo con el ID, " + id + " no encontrado. " + HttpStatus.NOT_FOUND);
+        odontologoService.odontologoDelete(id);
+        return ResponseEntity.ok("{\"mensaje\": \"El Odontologo fue modificado\"}");
     }
 
     @GetMapping
