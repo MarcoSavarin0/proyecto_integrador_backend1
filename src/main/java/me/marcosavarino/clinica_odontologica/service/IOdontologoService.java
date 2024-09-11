@@ -17,4 +17,6 @@ public interface IOdontologoService {
 
     void odontologoDelete(Integer id);
     Optional<OdontologoTurnoResponseDto> buscarPorIdController(Integer id);
+
+    Optional<List<Odontologo>> buscarPorLicencia(String licencia);
 }

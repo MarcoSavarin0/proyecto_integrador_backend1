@@ -3,14 +3,11 @@ package me.marcosavarino.clinica_odontologica.service.impl;
 import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.OdontologoTurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.dto.response.PacienteResponseDto;
 import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.TurnosOdontologoResoponseDto;
-import me.marcosavarino.clinica_odontologica.dto.response.TurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Odontologo;
 import me.marcosavarino.clinica_odontologica.exception.BadRequestException;
 import me.marcosavarino.clinica_odontologica.exception.ResourceNotFoundException;
 import me.marcosavarino.clinica_odontologica.repository.IOdontologoRepository;
 import me.marcosavarino.clinica_odontologica.service.IOdontologoService;
-import me.marcosavarino.clinica_odontologica.utils.ValidationUtils;
-import org.hibernate.grammars.hql.HqlParser;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +31,6 @@ public class OdontologoService implements IOdontologoService {
 
     @Override
     public Odontologo guardarOdontologo(Odontologo odontologo) {
-        ValidationUtils.validateOdontologo(odontologo);
         logger.info("Odontologo guardado: {}" + odontologo);
         return odontologoRepository.save(odontologo);
     }
@@ -62,7 +58,6 @@ public class OdontologoService implements IOdontologoService {
     public void odontologoUpdate(Odontologo o) {
         Optional<Odontologo> ondontologo = odontologoRepository.findById(o.getId());
         if (ondontologo.isPresent()) {
-            ValidationUtils.validateOdontologo(o);
             odontologoRepository.save(o);
 
         } else {
@@ -94,6 +89,13 @@ public class OdontologoService implements IOdontologoService {
         }
     }
 
+    @Override
+    public Optional<List<Odontologo>> buscarPorLicencia(String licencia) {
+        Optional<List<Odontologo>> odnotologoMatch = odontologoRepository.buscarPorLicencia(licencia);
+        logger.info("Odontologos matcheados por N de Licencia: []" + odnotologoMatch );
+        return odnotologoMatch;
+    }
+
     private OdontologoTurnoResponseDto mapearOdontologo(Odontologo odontologo) {
         OdontologoTurnoResponseDto turnoResponseDto = modelMapper.map(odontologo, OdontologoTurnoResponseDto.class);
         ModelMapper modelMapper = new ModelMapper();
@@ -105,6 +107,4 @@ public class OdontologoService implements IOdontologoService {
         turnoResponseDto.setTurnos(turnosDto);
         return turnoResponseDto;
     }
-
-
 }

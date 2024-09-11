@@ -1,8 +1,10 @@
 package me.marcosavarino.clinica_odontologica.entity;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +21,12 @@ import java.util.Set;
 public class Odontologo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Integer Id;
+    private Integer Id;
+    @NotBlank
     private String numero_De_Licencia;
+    @NotBlank
     private String nombre;
+    @NotBlank
     private String apellido;
     @OneToMany(mappedBy = "odontologo")
     @JsonManagedReference(value = "odontologo-turno")

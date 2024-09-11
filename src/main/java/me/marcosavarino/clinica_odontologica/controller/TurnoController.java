@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +57,15 @@ public class TurnoController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Hubo un problema al encontrar el turno!");
+        }
+    }
+    @GetMapping("/fechas")
+    public ResponseEntity<List<TurnoResponseDto>> turnoPorFecha(@RequestParam LocalDate fechaInit, @RequestParam LocalDate fechaLimit){
+        List<TurnoResponseDto> filterTurnos = turnoService.buscarPorFecha(fechaInit,fechaLimit);
+        if (filterTurnos.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(filterTurnos);
+        } else {
+            return ResponseEntity.ok(filterTurnos);
         }
     }
 

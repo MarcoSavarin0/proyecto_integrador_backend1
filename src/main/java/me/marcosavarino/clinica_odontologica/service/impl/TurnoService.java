@@ -13,6 +13,8 @@ import me.marcosavarino.clinica_odontologica.exception.ResourceNotFoundException
 import me.marcosavarino.clinica_odontologica.repository.ITurnoRepository;
 import me.marcosavarino.clinica_odontologica.service.ITurnoService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,8 @@ public class TurnoService implements ITurnoService {
     private ITurnoRepository turnoRepository;
     private PacienteService pacienteService;
     private OdontologoService odontologoService;
+    private final Logger logger = LoggerFactory.getLogger(TurnoService.class);
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -49,6 +53,7 @@ public class TurnoService implements ITurnoService {
             turnoDesdeDb = turnoRepository.save(turno);
             turnoARetornar = mapearATurnoResponse(turnoDesdeDb);
         }
+        logger.info("Turno Guardado: " + turnoARetornar);
         return turnoARetornar;
     }
 
@@ -57,6 +62,7 @@ public class TurnoService implements ITurnoService {
         Optional<Turno> turnoDesdeDb = turnoRepository.findById(id);
         TurnoResponseDto turnoResponseDto = null;
         if (turnoDesdeDb.isPresent()) {
+            logger.info("Turno encontrado: " + turnoResponseDto);
             turnoResponseDto = mapearATurnoResponse(turnoDesdeDb.get());
         }
         return Optional.ofNullable(turnoResponseDto);
@@ -67,9 +73,11 @@ public class TurnoService implements ITurnoService {
         List<Turno> turnos = turnoRepository.findAll();
         List<TurnoResponseDto> turnosRespuesta = new ArrayList<>();
         for (Turno t : turnos) {
+
             TurnoResponseDto turnoAuxiliar = mapearATurnoResponse(t);
             turnosRespuesta.add(turnoAuxiliar);
         }
+        logger.info("Turnos: " + turnosRespuesta);
         return turnosRespuesta;
     }
 
@@ -82,6 +90,7 @@ public class TurnoService implements ITurnoService {
             turno = new Turno(turnoModificarDto.getId(), paciente.get(), odontologo.get(),
                     LocalDate.parse(turnoModificarDto.getFecha()));
             turnoRepository.save(turno);
+            logger.info("Turno modificado " + turno);
         }
     }
 
@@ -93,6 +102,22 @@ public class TurnoService implements ITurnoService {
         } else {
             throw new ResourceNotFoundException("No se pudo eliminar el turno " + id);
         }
+    }
+
+    @Override
+    public List<TurnoResponseDto> buscarPorFecha(LocalDate fechaInit, LocalDate fechaLimit) {
+        List<TurnoResponseDto> listaParseada = new ArrayList<>();
+        List<Turno> fechas = turnoRepository.buscarPorFecha(fechaInit, fechaLimit);
+        if (fechas.isEmpty()) {
+            logger.warn("Arreglo vacio en la busqueda por fecha");
+            return listaParseada;
+        }
+        for (Turno f : fechas) {
+            TurnoResponseDto turnoAux = mapearATurnoResponse(f);
+            listaParseada.add(turnoAux);
+        }
+        logger.info("Lista de turnos filtrada por fecha: " + listaParseada);
+        return listaParseada;
     }
 
     private TurnoResponseDto mapearATurnoResponse(Turno turno) {

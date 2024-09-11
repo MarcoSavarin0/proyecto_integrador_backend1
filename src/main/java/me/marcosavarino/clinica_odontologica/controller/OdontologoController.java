@@ -1,5 +1,6 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
+import jakarta.validation.Valid;
 import me.marcosavarino.clinica_odontologica.dto.response.OdontologoResponseDto;
 import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.OdontologoTurnoResponseDto;
 import me.marcosavarino.clinica_odontologica.entity.Odontologo;
@@ -29,7 +30,7 @@ public class OdontologoController {
     }
 
     @PostMapping
-    public ResponseEntity<OdontologoResponseDto> guardarOdontologo(@RequestBody Odontologo odontologo) {
+    public ResponseEntity<OdontologoResponseDto> guardarOdontologo(@Valid @RequestBody Odontologo odontologo) {
         Odontologo savedOdontologo = odontologoService.guardarOdontologo(odontologo);
         OdontologoResponseDto odontologoResponseDto = new OdontologoResponseDto(savedOdontologo.getId(), savedOdontologo.getNumero_De_Licencia(),
                 savedOdontologo.getNombre(), savedOdontologo.getApellido()
@@ -38,7 +39,7 @@ public class OdontologoController {
     }
 
     @PutMapping("/editar")
-    public ResponseEntity<Odontologo> actualizarOdontologo(@RequestBody Odontologo odontologo) {
+    public ResponseEntity<Odontologo> actualizarOdontologo(@Valid @RequestBody Odontologo odontologo) {
         odontologoService.odontologoUpdate(odontologo);
         return ResponseEntity.ok(odontologo);
     }
@@ -52,6 +53,15 @@ public class OdontologoController {
     @GetMapping
     public ResponseEntity<List<Odontologo>> mostrarTodos() {
         List<Odontologo> odontologos = odontologoService.buscarTodosLosOdontologos();
+        return ResponseEntity.ok(odontologos);
+    }
+
+    @GetMapping("/numeroLicencia")
+    public ResponseEntity<Optional<List<Odontologo>>> buscarPorLicencia(@RequestParam String numeroLicencia) {
+        Optional<List<Odontologo>> odontologos = odontologoService.buscarPorLicencia(numeroLicencia);
+        if (odontologos.get().isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(odontologos);
     }
 }

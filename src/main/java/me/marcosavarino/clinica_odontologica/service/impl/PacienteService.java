@@ -10,7 +10,6 @@ import me.marcosavarino.clinica_odontologica.exception.GlobalHandler;
 import me.marcosavarino.clinica_odontologica.exception.ResourceNotFoundException;
 import me.marcosavarino.clinica_odontologica.repository.IPacienteRepository;
 import me.marcosavarino.clinica_odontologica.service.IPacienteService;
-import me.marcosavarino.clinica_odontologica.utils.ValidationUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +35,7 @@ public class PacienteService implements IPacienteService {
 
     @Override
     public Paciente guardarPaciente(Paciente paciente) {
-        ValidationUtils.validatePaciente(paciente);
-        ValidationUtils.validateDomicilio(paciente.getDomicilio());
+
         logger.info("Guardando paciente: {}", paciente);
         return pacienteRepository.save(paciente);
     }
@@ -66,8 +64,7 @@ public class PacienteService implements IPacienteService {
     public void pacienteUpdate(Paciente p) {
         Optional<Paciente> paciente = pacienteRepository.findById(p.getId());
         if (paciente.isPresent()) {
-            ValidationUtils.validatePaciente(p);
-            ValidationUtils.validateDomicilio(p.getDomicilio());
+
             pacienteRepository.save(p);
         } else {
             logger.warn("No se encontró el paciente con ID {}", p.getId());

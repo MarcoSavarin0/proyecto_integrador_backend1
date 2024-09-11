@@ -1,5 +1,6 @@
 package me.marcosavarino.clinica_odontologica.controller;
 
+import jakarta.validation.Valid;
 import me.marcosavarino.clinica_odontologica.dto.response.DomicilioResponseDto;
 import me.marcosavarino.clinica_odontologica.dto.response.PacienteResponseSaveDto;
 import me.marcosavarino.clinica_odontologica.dto.response.ResponsesTurno.Odontologos.OdontologoTurnoResponseDto;
@@ -33,7 +34,7 @@ public class PacienteController {
     }
 
     @PostMapping
-    public ResponseEntity<PacienteResponseSaveDto> guardarPaciente(@RequestBody Paciente paciente) {
+    public ResponseEntity<PacienteResponseSaveDto> guardarPaciente(@Valid @RequestBody Paciente paciente) {
         Paciente savedPaciente = pacienteService.guardarPaciente(paciente);
 
         Domicilio domicilioPaciente = savedPaciente.getDomicilio();
@@ -57,7 +58,7 @@ public class PacienteController {
     }
 
     @PutMapping("/editar")
-    public ResponseEntity<Paciente> actualizarPaciente(@RequestBody Paciente paciente) {
+    public ResponseEntity<Paciente> actualizarPaciente(@Valid @RequestBody Paciente paciente) {
             pacienteService.pacienteUpdate(paciente);
             return ResponseEntity.status(HttpStatus.OK).body(paciente);
     }

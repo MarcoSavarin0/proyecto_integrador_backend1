@@ -7,6 +7,7 @@ import me.marcosavarino.clinica_odontologica.entity.Odontologo;
 import me.marcosavarino.clinica_odontologica.entity.Paciente;
 import me.marcosavarino.clinica_odontologica.entity.Turno;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,6 @@ public interface ITurnoService {
     void modificarTurno(TurnoModificarDto TurnoModificarDto);
 
     void eliminarTurno(Integer id);
+
+    List<TurnoResponseDto> buscarPorFecha(LocalDate fechaInit, LocalDate fechaLimit);
 }

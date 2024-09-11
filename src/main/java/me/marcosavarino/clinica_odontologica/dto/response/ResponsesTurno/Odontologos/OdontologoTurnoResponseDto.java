@@ -17,4 +17,15 @@ public class OdontologoTurnoResponseDto {
     private String nombre;
     private String apellido;
     private List<TurnosOdontologoResoponseDto> turnos;
+
+    @Override
+    public String toString() {
+        return "OdontologoTurnoResponseDto{" +
+                "id=" + id +
+                ", numero_De_Licencia='" + numero_De_Licencia + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", turnos=" + turnos +
+                '}';
+    }
 }
